@@ -1,8 +1,5 @@
 const express = require("express");
 const fbHanle = require('./fbHandle.js')
-const models = require('./models.js');
-
-models.initModels();
 
 var app = express();
 

@@ -1,11 +1,25 @@
 const jpeg = require('jpeg-js');
 const fs = require('fs');
+const glob = require('glob');
 
 module.exports.loadImages = function() {
-  var filepath = '../assets/data/WIDER_val/images/0--Parade/0_Parade_Parade_0_102.jpg';  
-  var jpeg_data = fs.readFileSync(filepath);
+  var images = getImagesFiles();
+  var raw_list = [];
+  for(i=0; i < images.length; i++) {
+    raw_list.push(load(images[i]));
+  }
+  console.log(raw_list);
+  return raw_list[0];
+}
+
+load = function(imageFile) {
+  var jpeg_data = fs.readFileSync(imageFile);
   var raw_data = jpeg.decode(jpeg_data);
   return raw_data;
+}
+
+getImagesFiles = function() {
+  return glob.sync('../assets/data/small' + '/**/*.jpg');
 }
 
 module.exports.encode2image = function(dst) {

@@ -1,6 +1,10 @@
 const utils = require('./utils.js');
 const models = require('./models.js');
 
+// preload the images and initialize the models before server starts
+var raw_data = utils.loadImages();
+models.initModels();
+
 module.exports.handle = function(model, req, res) {
   var faceCascade;
   if (model == 'haar') {
@@ -19,8 +23,6 @@ module.exports.handle = function(model, req, res) {
 }
 
 handleHaar = function(req, res) {
-  // prepare input image
-  var raw_data = utils.loadImages();
   // prepare classifier
   faceCascade = models.loadClassifier('haar');
   // detect and draw box around face
@@ -32,8 +34,6 @@ handleHaar = function(req, res) {
 }
 
 handleLbp = function(req, res) {  
-  // prepare input image
-  var raw_data = utils.loadImages();
   // prepare classifier
   faceCascade = models.loadClassifier('lbp');
   // detect and draw box around face
@@ -49,7 +49,6 @@ handleDnn = function(req, res) {
 }
 
 handleCool = function(req, res) {
-  var raw_data = utils.loadImages();
   var dst = models.contour(raw_data);
   var jpeg_data = utils.encode2image(dst);
   res.end(jpeg_data.data);
