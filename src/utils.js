@@ -8,7 +8,7 @@ module.exports.loadImages = function() {
   for(i=0; i < images.length; i++) {
     raw_list.push(load(images[i]));
   }
-  console.log(raw_list);
+  // console.log(raw_list);
   return raw_list;
 }
 

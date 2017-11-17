@@ -3,6 +3,7 @@ const models = require('./models.js');
 
 // preload the images and initialize the models before server starts
 var raw_list = utils.loadImages();
+var raw_list_size = raw_list.length;
 models.initModels();
 
 module.exports.handle = function(model, req, res) {
@@ -25,30 +26,25 @@ module.exports.handle = function(model, req, res) {
 handleHaar = function(req, res) {
   // prepare classifier
   faceCascade = models.loadClassifier('haar');
-  var now = Date.now();
-  let size = raw_list.length;
+  // prepare response
   res.setHeader('Content-Type', 'text/event-stream');
-  for (var i = 0; i < size; ++i) {
-    var dst = models.builtin_face_detection(faceCascade, raw_list[i]);
+  // start timing it
+  var now = Date.now();
+  for (var i = 0; i < raw_list_size; ++i) {
+    var facesMeta = models.builtin_face_detection(faceCascade, raw_list[i]);
     var then = Date.now();
-
     if ((i + 1) % 10 == 0) { // reach the 10s point
-      res.write(utils.getOutput(then - now, i, size));
+      res.write(utils.getOutput(then - now, i, raw_list_size));
       res.flushHeaders();
       now = then;
     }
   }
+  // finish up
   if (then == now) {
     res.end();
   } else {
-    res.end(utils.getOutput(then - now, size - 1, size));
+    res.end(utils.getOutput(then - now, raw_list_size - 1, raw_list_size));
   }
-  // detect and draw box around face
-  // reformat output
-  // var jpeg_data = utils.encode2image(dst);
-
-  // response
-  // res.end(jpeg_data.data);
 }
 
 handleLbp = function(req, res) {

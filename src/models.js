@@ -37,22 +37,42 @@ module.exports.builtin_face_detection = function(clf, raw_data) {
   cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
   // detect and draw box around face
   let faces = new cv.RectVector();
+  let X = [];
+  let Y = [];
+  let W = [];
+  let H = [];
+  // detect
   clf.detectMultiScale(src, faces);
+  // collect detected faces info for evaluation
   for (let i = 0; i < faces.size(); ++i) { // WHY new faces can be indexed as such?
       let roiGray = gray.roi(faces.get(i));
       let roiSrc = src.roi(faces.get(i));
-      let point1 = new cv.Point(faces.get(i).x, faces.get(i).y);
-      let point2 = new cv.Point(faces.get(i).x + faces.get(i).width,
-                                faces.get(i).y + faces.get(i).height);
-      cv.rectangle(src, point1, point2, [255, 0, 0, 255]);
+      X.push(faces.get(i).x);
+      Y.push(faces.get(i).y);
+      W.push(faces.get(i).width);
+      H.push(faces.get(i).height);
       
-      console.log("face detected");
+      // draw boxes around faces on src
+      // let point1 = new cv.Point(faces.get(i).x, faces.get(i).y);
+      // 
+      // let point2 = new cv.Point(faces.get(i).x + faces.get(i).width,
+      //                           faces.get(i).y + faces.get(i).height);
+      // cv.rectangle(src, point1, point2, [255, 0, 0, 255]);
+      
       roiGray.delete(); 
       roiSrc.delete();
   }
+  console.log(faces.size() + "\tface detected");
   gray.delete(); 
-  faces.delete(); 
-  return src;
+  src.delete();
+  return {num : faces.size(),
+          X : X,
+          Y : Y,
+          W : W,
+          H : H,
+          score : 1.000
+        };
+  // return src;
 }
 
 // cool contour sample 
