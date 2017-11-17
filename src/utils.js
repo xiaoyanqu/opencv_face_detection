@@ -31,6 +31,6 @@ module.exports.encode2image = function(dst) {
   return jpeg_data;
 }
 
-getOutput = function(elapse, cur, size) {
-  return "It took " + elapse + " ms to process " + (cur + 1) + " out of " + size + " images.";;
+module.exports.getOutput = function(elapse, cur, size) {
+  return "It took " + elapse + " ms to process " + (cur + 1) + " out of " + size + " images.\n";
 }

@@ -27,20 +27,21 @@ handleHaar = function(req, res) {
   faceCascade = models.loadClassifier('haar');
   var now = Date.now();
   let size = raw_list.length;
+  res.setHeader('Content-Type', 'text/event-stream');
   for (var i = 0; i < size; ++i) {
-
     var dst = models.builtin_face_detection(faceCascade, raw_list[i]);
     var then = Date.now();
 
     if ((i + 1) % 10 == 0) { // reach the 10s point
-      res.write(util.getOutout(then - now, i, size));
+      res.write(utils.getOutput(then - now, i, size));
+      res.flushHeaders();
       now = then;
     }
   }
   if (then == now) {
     res.end();
   } else {
-    res.end(util.getOutput(then - now, size - 1, size));
+    res.end(utils.getOutput(then - now, size - 1, size));
   }
   // detect and draw box around face
   // reformat output
