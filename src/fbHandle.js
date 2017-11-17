@@ -2,7 +2,7 @@ const utils = require('./utils.js');
 const models = require('./models.js');
 
 // preload the images and initialize the models before server starts
-var raw_data = utils.loadImages();
+var raw_list = utils.loadImages();
 models.initModels();
 
 module.exports.handle = function(model, req, res) {
@@ -26,10 +26,10 @@ handleHaar = function(req, res) {
   // prepare classifier
   faceCascade = models.loadClassifier('haar');
   var now = Date.now();
-  let size = raw_data.size;
+  let size = raw_list.length;
   for (var i = 0; i < size; ++i) {
 
-    var dst = models.builtin_face_detection(faceCascade, raw_data[i]);
+    var dst = models.builtin_face_detection(faceCascade, raw_list[i]);
     var then = Date.now();
 
     if ((i + 1) % 10 == 0) { // reach the 10s point
@@ -40,7 +40,7 @@ handleHaar = function(req, res) {
   if (then == now) {
     res.end();
   } else {
-    res.end(util.getOutout(then - now, size - 1, size));
+    res.end(util.getOutput(then - now, size - 1, size));
   }
   // detect and draw box around face
   // reformat output
@@ -54,7 +54,7 @@ handleLbp = function(req, res) {
   // prepare classifier
   faceCascade = models.loadClassifier('lbp');
   // detect and draw box around face
-  var dst = models.builtin_face_detection(faceCascade, raw_data);
+  var dst = models.builtin_face_detection(faceCascade, raw_list);
   // reformat output
   var jpeg_data = utils.encode2image(dst);
   // response
@@ -66,7 +66,7 @@ handleDnn = function(req, res) {
 }
 
 handleCool = function(req, res) {
-  var dst = models.contour(raw_data);
+  var dst = models.contour(raw_list);
   var jpeg_data = utils.encode2image(dst);
   res.end(jpeg_data.data);
 }

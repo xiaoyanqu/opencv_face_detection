@@ -9,7 +9,7 @@ module.exports.loadImages = function() {
     raw_list.push(load(images[i]));
   }
   console.log(raw_list);
-  return raw_list[0];
+  return raw_list;
 }
 
 load = function(imageFile) {
@@ -31,6 +31,6 @@ module.exports.encode2image = function(dst) {
   return jpeg_data;
 }
 
-getOutout = function(elapse, cur, size) {
+getOutput = function(elapse, cur, size) {
   return "It took " + elapse + " ms to process " + (cur + 1) + " out of " + size + " images.";;
 }
