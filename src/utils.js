@@ -23,10 +23,14 @@ getImagesFiles = function() {
 }
 
 module.exports.encode2image = function(dst) {
-  var raw_data = { data: dst.data, 
-                   width: dst.size().width, 
-                   height: dst.size().height 
+  var raw_data = { data: dst.data,
+                   width: dst.size().width,
+                   height: dst.size().height
                  };
   var jpeg_data = jpeg.encode(raw_data, 50);
   return jpeg_data;
+}
+
+getOutout = function(elapse, cur, size) {
+  return "It took " + elapse + " ms to process " + (cur + 1) + " out of " + size + " images.";;
 }

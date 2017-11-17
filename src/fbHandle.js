@@ -25,15 +25,32 @@ module.exports.handle = function(model, req, res) {
 handleHaar = function(req, res) {
   // prepare classifier
   faceCascade = models.loadClassifier('haar');
+  var now = Date.now();
+  let size = raw_data.size;
+  for (var i = 0; i < size; ++i) {
+
+    var dst = models.builtin_face_detection(faceCascade, raw_data[i]);
+    var then = Date.now();
+
+    if ((i + 1) % 10 == 0) { // reach the 10s point
+      res.write(util.getOutout(then - now, i, size));
+      now = then;
+    }
+  }
+  if (then == now) {
+    res.end();
+  } else {
+    res.end(util.getOutout(then - now, size - 1, size));
+  }
   // detect and draw box around face
-  var dst = models.builtin_face_detection(faceCascade, raw_data);
   // reformat output
-  var jpeg_data = utils.encode2image(dst);
+  // var jpeg_data = utils.encode2image(dst);
+
   // response
-  res.end(jpeg_data.data);
+  // res.end(jpeg_data.data);
 }
 
-handleLbp = function(req, res) {  
+handleLbp = function(req, res) {
   // prepare classifier
   faceCascade = models.loadClassifier('lbp');
   // detect and draw box around face
