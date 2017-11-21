@@ -41,6 +41,7 @@ module.exports.evaluate_builtin_face_detection = function(clf, raw_data) {
   let Y = [];
   let W = [];
   let H = [];
+  let S = [];
   // detect
   clf.detectMultiScale(src, faces);
   // collect detected faces info for evaluation
@@ -51,18 +52,19 @@ module.exports.evaluate_builtin_face_detection = function(clf, raw_data) {
       Y.push(faces.get(i).y);
       W.push(faces.get(i).width);
       H.push(faces.get(i).height);
+      S.push(1.000); // TODO
       roiGray.delete(); 
       roiSrc.delete();
   }
   console.log(faces.size() + "\tface detected");
   gray.delete(); 
   src.delete();
-  return {num : faces.size(),
+  return {N : faces.size(),
           X : X,
           Y : Y,
           W : W,
           H : H,
-          score : 1.000
+          S : S
         };
 }
 

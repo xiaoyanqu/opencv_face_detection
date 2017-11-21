@@ -7,7 +7,8 @@
     "express": "^4.16.2",
     "fs": "^0.0.1-security",
     "glob": "^7.1.2",
-    "jpeg-js": "^0.3.3"
+    "jpeg-js": "^0.3.3",
+    "path": "^0.12.7"
   },
   "devDependencies": {},
   "scripts": {

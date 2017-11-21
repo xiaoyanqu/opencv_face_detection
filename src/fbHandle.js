@@ -2,8 +2,11 @@ const utils = require('./utils.js');
 const models = require('./models.js');
 
 // preload the images and initialize the models before server starts
-var raw_list = utils.loadImages();
+var data = utils.loadImages();
+var raw_list = data['raw_data_list'];
 var raw_list_size = raw_list.length;
+var img_path_list = data['img_path_list'];
+
 models.initModels();
 
 module.exports.runPerf = function(model, req, res) {
@@ -24,11 +27,17 @@ runHaar = function(req, res) {
   var faceCascade = models.loadClassifier('haar');
   // prepare response
   res.setHeader('Content-Type', 'text/event-stream');
+  // prepare local evalution file 
+  // TODO : use img_path_list to create directory where each source dir maps to a output report dir
+  evalFilePath = utils.create_evaluationFile("../assets/evaluation/WIDER_small/eval.txt");
   // start timing it
   var now = Date.now();
   for (var i = 0; i < raw_list_size; ++i) {
     var facesMeta = models.evaluate_builtin_face_detection(faceCascade, raw_list[i]);
     var then = Date.now();
+    // console.log(facesMeta);
+    utils.append_evaluationEntry(facesMeta, img_path_list[i], evalFilePath); 
+    // img_path_list[i] -> path of each image
     if ((i + 1) % 10 == 0) { // reach the 10s point
       res.write(utils.getOutput(then - now, i, raw_list_size));
       res.flushHeaders();

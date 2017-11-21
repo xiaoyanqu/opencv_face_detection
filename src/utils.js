@@ -1,15 +1,18 @@
 const jpeg = require('jpeg-js');
 const fs = require('fs');
 const glob = require('glob');
+const ps = require('path');
 
 module.exports.loadImages = function() {
-  var images = getImagesFiles();
+  var img_filepaths = getImagesFiles();
   var raw_list = [];
-  for(i=0; i < images.length; i++) {
-    raw_list.push(load(images[i]));
+  for(i=0; i < img_filepaths.length; i++) {
+    raw_list.push(load(img_filepaths[i]));
   }
-  // console.log(raw_list);
-  return raw_list;
+  // console.log(raw_list[0]);
+  return {raw_data_list : raw_list,
+          img_path_list : img_filepaths
+        };
 }
 
 load = function(imageFile) {
@@ -19,7 +22,7 @@ load = function(imageFile) {
 }
 
 getImagesFiles = function() {
-  return glob.sync('../assets/data/small' + '/**/*.jpg');
+  return glob.sync('../assets/data/WIDER_small' + '/**/*.jpg');
 }
 
 module.exports.encode2image = function(dst) {
@@ -33,4 +36,39 @@ module.exports.encode2image = function(dst) {
 
 module.exports.getOutput = function(elapse, cur, size) {
   return "It took " + (elapse / (cur + 1)) + " ms to process each image. Progress: " + (cur + 1) + "/" + size + " done.\n";
+}
+
+module.exports.create_evaluationFile = function(filepath)
+{
+  var header = "";
+  fs.writeFileSync(filepath, header);
+  return filepath;
+}
+stringifyEvaluationEntry = function(imgName, facesMeta) 
+{
+  var rst = imgName + '\n';
+  
+  var N = facesMeta['N'];
+  rst += N.toString() + '\n';
+  
+  var X = facesMeta['X'];
+  var Y = facesMeta['Y'];
+  var W = facesMeta['W'];
+  var H = facesMeta['H'];
+  var S = facesMeta['S'];
+  for(var i = 0; i < N; i++) {
+    rst += X[i].toString() + '\t'
+         + Y[i].toString() + '\t'
+         + W[i].toString() + '\t'
+         + H[i].toString() + '\t'
+         + S[i].toString() + '\n';
+  }
+  return rst;
+}
+module.exports.append_evaluationEntry = function(facesMeta, imgFilepath, evalFilePath) 
+{
+  var entry = stringifyEvaluationEntry(ps.basename(imgFilepath), facesMeta);
+  console.log(entry);
+  fs.appendFileSync(evalFilePath, entry);
+  console.log("Evaluated.");
 }
