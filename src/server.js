@@ -11,6 +11,10 @@ app.get('/perf/lbp', function(req, res) {
   fbHanle.runPerf('lbp', req, res);
 });
 
+app.get('/perf/dnn', function(req, res) {
+  fbHanle.runPerf('dnn', req, res);
+});
+
 app.get('/show/haar', function(req, res) {
   fbHanle.showExample('haar', req, res);
 });

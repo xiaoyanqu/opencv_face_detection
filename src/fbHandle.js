@@ -1,13 +1,19 @@
 const utils = require('./utils.js');
 const models = require('./models.js');
+// const dnn = require('./dnn/dnn.js');
 
 // preload the images and initialize the models before server starts
+var preload = Date.now();
 var data = utils.loadImages();
-var raw_list = data['raw_data_list'];
-var raw_list_size = raw_list.length;
+var raw_imgs = data['raw_data_list'];
+var raw_list_size = raw_imgs.length;
 var img_path_list = data['img_path_list'];
+var postload = Date.now();
+console.log(raw_list_size + " images loaded! Time taken: " + (postload - preload) + " ms.");
 
 models.initModels();
+console.log("Haar/Lbp classifier loaded!.");
+
 
 module.exports.runPerf = function(model, req, res) {
   if (model == 'haar') {
@@ -17,7 +23,7 @@ module.exports.runPerf = function(model, req, res) {
     runLbp(req, res);
   }
   else if (model == 'dnn') {
-    ;
+    runDnn(req, res);
   }
   else {;}
 }
@@ -33,7 +39,7 @@ runHaar = function(req, res) {
   // start timing it
   var now = Date.now();
   for (var i = 0; i < raw_list_size; ++i) {
-    var facesMeta = models.evaluate_builtin_face_detection(faceCascade, raw_list[i]);
+    var facesMeta = models.evaluate_builtin_face_detection(faceCascade, raw_imgs[i]);
     var then = Date.now();
     // console.log(facesMeta);
     utils.append_evaluationEntry(facesMeta, img_path_list[i], evalFilePath); 
@@ -60,7 +66,7 @@ runLbp = function(req, res) {
   // start timing it
   var now = Date.now();
   for (var i = 0; i < raw_list_size; ++i) {
-    var facesMeta = models.evaluate_builtin_face_detection(faceCascade, raw_list[i]);
+    var facesMeta = models.evaluate_builtin_face_detection(faceCascade, raw_imgs[i]);
     var then = Date.now();
     if ((i + 1) % 10 == 0) { // reach the 10s point
       res.write(utils.getOutput(then - now, i, raw_list_size));
@@ -99,7 +105,7 @@ showHaar = function(req, res) {
   // prepare classifier
   var faceCascade = models.loadClassifier('haar');
   // detect and draw box around face
-  var dst = models.show_builtin_face_detection(faceCascade, raw_list[0]);
+  var dst = models.show_builtin_face_detection(faceCascade, raw_imgs[0]);
   // reformat output
   var jpeg_data = utils.encode2image(dst);
   // response
@@ -110,7 +116,7 @@ showLbp = function(req, res) {
   // prepare classifier
   var faceCascade = models.loadClassifier('lbp');
   // detect and draw box around face
-  var dst = models.show_builtin_face_detection(faceCascade, raw_list[0]);
+  var dst = models.show_builtin_face_detection(faceCascade, raw_imgs[0]);
   // reformat output
   var jpeg_data = utils.encode2image(dst);
   // response

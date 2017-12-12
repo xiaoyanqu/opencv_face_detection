@@ -37,13 +37,15 @@ module.exports.evaluate_builtin_face_detection = function(clf, raw_data) {
   cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
   // detect and draw box around face
   let faces = new cv.RectVector();
+  let rejectVect = new cv.IntVector();
+  let levelVect = new cv.DoubleVector();
   let X = [];
   let Y = [];
   let W = [];
   let H = [];
   let S = [];
-  // detect
-  clf.detectMultiScale(src, faces);
+  // detect with confidence score
+  clf.detectMultiScale3(src, faces, rejectVect, levelVect, 1.1, 3, 0, {width:0, height:0}, {width:0, height:0}, true);
   // collect detected faces info for evaluation
   for (let i = 0; i < faces.size(); ++i) { // WHY new faces can be indexed as such?
       let roiGray = gray.roi(faces.get(i));
@@ -52,7 +54,7 @@ module.exports.evaluate_builtin_face_detection = function(clf, raw_data) {
       Y.push(faces.get(i).y);
       W.push(faces.get(i).width);
       H.push(faces.get(i).height);
-      S.push(1.000); // TODO
+      S.push(rejectVect.get(i)); // these cv dataStruct cannot be recognized when output directly
       roiGray.delete(); 
       roiSrc.delete();
   }
