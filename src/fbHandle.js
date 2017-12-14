@@ -4,7 +4,7 @@ const models = require('./models.js');
 
 // preload the images and initialize the models before server starts
 var preload = Date.now();
-var data = utils.loadImages();
+var data = utils.loadImages('test');
 var raw_imgs = data['raw_data_list'];
 var raw_list_size = raw_imgs.length;
 var img_path_list = data['img_path_list'];
@@ -31,8 +31,9 @@ module.exports.runPerf = function(model, req, res) {
 runHaar = function(req, res) {
   // prepare classifier
   var faceCascade = models.loadClassifier('haar');
-  // prepare response
-  res.setHeader('Content-Type', 'text/event-stream');
+  
+  res.setHeader('Content-Type', 'text/plain');
+  
   // prepare local evalution file 
   // TODO : use img_path_list to create directory where each source dir maps to a output report dir
   evalFilePath = utils.create_evaluationFile("../assets/evaluation/WIDER_small/eval.txt");
@@ -44,9 +45,9 @@ runHaar = function(req, res) {
     // console.log(facesMeta);
     utils.append_evaluationEntry(facesMeta, img_path_list[i], evalFilePath); 
     // img_path_list[i] -> path of each image
-    if ((i + 1) % 10 == 0) { // reach the 10s point
-      res.write(utils.getOutput(then - now, i, raw_list_size));
-      res.flushHeaders();
+    if ((i + 1) % 10 == 0) { // reach the 10s point    
+      rc = res.write(utils.getOutput(then - now, i, raw_list_size));
+      console.log("Batch Results Sent: " + rc);
       now = then;
     }
   }
@@ -69,8 +70,7 @@ runLbp = function(req, res) {
     var facesMeta = models.evaluate_builtin_face_detection(faceCascade, raw_imgs[i]);
     var then = Date.now();
     if ((i + 1) % 10 == 0) { // reach the 10s point
-      res.write(utils.getOutput(then - now, i, raw_list_size));
-      res.flushHeaders();
+      console.log("Batch Results Sent: " + res.write(utils.getOutput(then - now, i, raw_list_size)));
       now = then;
     }
   }

@@ -3,13 +3,12 @@ const fs = require('fs');
 const glob = require('glob');
 const ps = require('path');
 
-module.exports.loadImages = function() {
-  var img_filepaths = getImagesFiles();
+module.exports.loadImages = function(which) {
+  var img_filepaths = getImagesFiles(which);
   var raw_list = [];
   for(i=0; i < img_filepaths.length; i++) {
     raw_list.push(load(img_filepaths[i]));
   }
-  // console.log(raw_list[0]);
   return {raw_data_list : raw_list,
           img_path_list : img_filepaths
         };
@@ -21,8 +20,16 @@ load = function(imageFile) {
   return raw_data;
 }
 
-getImagesFiles = function() {
-  return glob.sync('../assets/data/WIDER_small' + '/**/*.jpg');
+getImagesFiles = function(which) {
+  if (which == 'test') {
+    return glob.sync('../assets/data/WIDER_test/*.jpg');
+  }
+  else if (which == 'small') {
+    return glob.sync('../assets/data/WIDER_small' + '/**/*.jpg');
+  }
+  else {
+    console.log("No corresponding images found.");
+  }
 }
 
 module.exports.encode2image = function(dst) {
