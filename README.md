@@ -37,29 +37,22 @@ It can be configured in src/models.js - 1st line
 2. opencvJs stores two different version of compile opencv.js for performance testing.
 3. src includes backend code, including: a server (server.js), a request handler (fbHandle.js), a model module (models.js), a utility module (utils.js) and two helper files (opencv_js.js, opencv_js.wasm required for running wasm/opencv.js). It also includes dnn folder, where there is a successful use case of opencv dnn module in chrome. This was what we plan to follw up if more time is allowed.
 
-├── opencvJs
-│   ├── asm
-│   │   └── opencv.js
-│   └── wasm
-│       ├── opencv.js
-│       ├── opencv_js.js
-│       └── opencv_js.wasm
-└── src
-    ├── dnn
-    │   ├── bvlc_googlenet.caffemodel
-    │   ├── bvlc_googlenet.prototxt
-    │   ├── dnn.js
-    │   ├── dnn_utils.js
-    │   ├── opencv.js
-    │   ├── synset_words.txt
-    │   ├── test_googlenet.html
-    │   └── utils.js
-    ├── fbHandle.js
-    ├── models.js
-    ├── opencv_js.js
-    ├── opencv_js.wasm
-    ├── server.js
-    └── utils.js
+├── opencvJs  
+│   ├── asm  
+│   │   └── opencv.js  
+│   └── wasm  
+│       ├── opencv.js  
+│       ├── opencv_js.js  
+│       └── opencv_js.wasm  
+└── src  
+    ├── dnn   
+    │  
+    ├── fbHandle.js  
+    ├── models.js  
+    ├── opencv_js.js  
+    ├── opencv_js.wasm  
+    ├── server.js  
+    └── utils.js  
   
 Good place for example: https://www.npmjs.com/package/opencv.js
   
