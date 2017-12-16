@@ -1,8 +1,8 @@
 /*
   configure which opencv.js to use
 */ 
-// const cv = require('../opencvJs/asm/opencv.js');
-const cv = require('../opencvJs/wasm/opencv.js');
+const cv = require('../opencvJs/asm/opencv.js');
+// const cv = require('../opencvJs/wasm/opencv.js');
 
 module.exports.initModels = function() {
   cv.FS_createLazyFile('/', 
